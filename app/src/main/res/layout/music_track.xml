@@ -5,14 +5,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/iv_logo"
+    
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_logoHolder"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        app:cardCornerRadius="8dp"
         android:layout_margin="15dp"
 
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+             />
+
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/tv_name"
@@ -22,8 +36,8 @@
         android:textColor="@android:color/black"
         android:maxLines="1"
         android:ellipsize="end"
-        app:layout_constraintStart_toEndOf="@id/iv_logo"
-        app:layout_constraintTop_toTopOf="@id/iv_logo"
+        app:layout_constraintStart_toEndOf="@id/cv_logoHolder"
+        app:layout_constraintTop_toTopOf="@id/cv_logoHolder"
         tools:text="Warrior" />
 
     <TextView
@@ -31,7 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        app:layout_constraintLeft_toRightOf="@id/iv_logo"
+        app:layout_constraintLeft_toRightOf="@id/cv_logoHolder"
         app:layout_constraintTop_toBottomOf="@+id/tv_name"
         android:text="Imagine Dragons"
         />
