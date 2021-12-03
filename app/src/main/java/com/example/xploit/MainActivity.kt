@@ -1,5 +1,6 @@
 package com.example.xploit
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -19,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.xploit.databinding.ActivityMainBinding
+import com.example.xploit.ui.musicplayer.MusicPlayerActivity
 import com.example.xploit.ui.track.MusicListAdapter
 import com.example.xploit.ui.track.MusicModel
 

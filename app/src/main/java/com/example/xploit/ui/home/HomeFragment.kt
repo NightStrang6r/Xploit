@@ -48,7 +48,7 @@ class HomeFragment : Fragment() {
             textView.text = it
         })*/
 
-        // TrackList
+        // TrackList //
         val rvList = binding.rvList
 
         val adapter = MusicListAdapter(requireContext())
@@ -58,7 +58,7 @@ class HomeFragment : Fragment() {
         rvList.adapter = adapter
         rvList.layoutManager = layoutManager
 
-        val contactsList = mutableListOf<MusicModel>()
+        val trackList = mutableListOf<MusicModel>()
 
 
         fun getPopularPlaylist() {
@@ -66,13 +66,13 @@ class HomeFragment : Fragment() {
                 override fun onResponse(call: Call<ApiResp>, response: Response<ApiResp>) {
                     if(response.isSuccessful){
                         response.body()?.items?.forEach { it ->
-                            contactsList.add(MusicModel(
+                            trackList.add(MusicModel(
                                 it.title,
                                 it.artist,
                                 it.duration,
                                 it.image))
                         }
-                        adapter.setData(contactsList)
+                        adapter.setData(trackList)
                     } else {
                         binding.tvStatusText.text = "Не удалось получить список песен (code: resp)."
                     }
@@ -85,6 +85,7 @@ class HomeFragment : Fragment() {
         }
 
         getPopularPlaylist()
+        // TrackList //
 
         return root
     }
