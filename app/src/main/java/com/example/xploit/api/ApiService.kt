@@ -9,7 +9,7 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
 
-private const val BASE_URL = "https://leoitdev.ru/api/xploit/"
+private const val BASE_URL = "https://xploit.leoitdev.ru/"
 
 interface ApiService {
     @GET("getCatalog/?id=popular")
