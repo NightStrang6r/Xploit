@@ -1,15 +1,19 @@
 package com.example.xploit.ui.musicplayer
 
+import android.app.DownloadManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.xploit.R
+import com.example.xploit.api.ApiResp
+import com.example.xploit.api.CoverUrl
+import com.example.xploit.api.RetrofitInstance
 import com.example.xploit.databinding.ActivityMainBinding
 import com.example.xploit.databinding.ActivityMusicPlayerBinding
-import com.example.xploit.ui.track.KEY_DATA_artist
-import com.example.xploit.ui.track.KEY_DATA_cover
-import com.example.xploit.ui.track.KEY_DATA_duration
-import com.example.xploit.ui.track.KEY_DATA_name
+import com.example.xploit.ui.track.*
 import com.squareup.picasso.Picasso
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MusicPlayerActivity : AppCompatActivity() {
 
@@ -27,8 +31,31 @@ class MusicPlayerActivity : AppCompatActivity() {
 
         binding.tvTrackName.text = name
         binding.tvTrackArtist.text = artist
-        Picasso.with(this)
-            .load(cover)
-            .into(binding.ivTrackCover)
+
+        val context = this
+
+        fun setCoverUrl(query: String) : String? {
+            var res : String? = null
+            RetrofitInstance.api.getCoverUrl(query).enqueue(object : Callback<CoverUrl> {
+                override fun onResponse(call: Call<CoverUrl>, response: Response<CoverUrl>) {
+                    if(response.isSuccessful){
+                        Picasso.with(context)
+                            .load(response.body()?.url)
+                            .into(binding.ivTrackCover)
+                    } else {
+                        val i = 0
+                    }
+                }
+
+                override fun onFailure(call: Call<CoverUrl>, t: Throwable) {
+                    val i = 0
+                }
+            })
+            return res
+        }
+
+        setCoverUrl("${name} ${artist}")
     }
+
+
 }
