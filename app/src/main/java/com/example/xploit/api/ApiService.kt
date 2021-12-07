@@ -10,9 +10,6 @@ import com.google.gson.GsonBuilder
 
 import com.google.gson.Gson
 
-
-
-
 private const val BASE_URL = "https://xploit.leoitdev.ru/"
 
 interface ApiService {

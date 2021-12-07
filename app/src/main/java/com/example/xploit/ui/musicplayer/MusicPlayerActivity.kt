@@ -56,6 +56,4 @@ class MusicPlayerActivity : AppCompatActivity() {
 
         setCoverUrl("${name} ${artist}")
     }
-
-
 }
