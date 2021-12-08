@@ -58,6 +58,16 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_trackArtist" />
 
     <ImageButton
+        android:id="@+id/bt_TrackPause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_pause_circle_filled_50"
+        android:layout_marginTop="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bt_trackPlay" />
+
+    <ImageButton
         android:id="@+id/bt_trackPrevious"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

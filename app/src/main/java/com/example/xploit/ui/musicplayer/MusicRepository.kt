@@ -12,6 +12,7 @@ internal class MusicRepository {
             (3 * 60 + 41) * 1000))
     private val maxIndex = data.size - 1
     private var currentItemIndex = 0
+
     val next: Track
         get() {
             if (currentItemIndex == maxIndex) currentItemIndex = 0 else currentItemIndex++
@@ -26,7 +27,10 @@ internal class MusicRepository {
         get() = data[currentItemIndex]
 
     internal class Track(
-        val title: String, val artist: String, val bitmapResId: Int, val uri: Uri, // in ms
-        val duration: Long,
+        val title: String,
+        val artist: String,
+        val bitmapResId: Int,
+        val uri: Uri,
+        val duration: Long, // in ms
     )
 }

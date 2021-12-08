@@ -1,7 +1,15 @@
 package com.example.xploit.ui.musicplayer
 
 import android.app.DownloadManager
+import android.content.ComponentName
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
+import android.os.RemoteException
+import android.support.v4.media.session.MediaControllerCompat
+import android.support.v4.media.session.PlaybackStateCompat
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.xploit.R
 import com.example.xploit.api.ApiResp
@@ -18,6 +26,11 @@ import retrofit2.Response
 class MusicPlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMusicPlayerBinding
+
+    private var playerServiceBinder: PlayerService.PlayerServiceBinder? = null
+    private var mediaController: MediaControllerCompat? = null
+    private var callback: MediaControllerCompat.Callback? = null
+    private var serviceConnection: ServiceConnection? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,5 +68,71 @@ class MusicPlayerActivity : AppCompatActivity() {
         }
 
         setCoverUrl("${name} ${artist}")
+
+        //
+
+        callback = object : MediaControllerCompat.Callback() {
+            override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
+                if (state == null) return
+                val playing = state.state == PlaybackStateCompat.STATE_PLAYING
+                binding.btTrackPlay.isEnabled = !playing
+                binding.btTrackPause.isEnabled = playing
+                //stopButton.setEnabled(playing)
+            }
+        }
+
+        serviceConnection = object : ServiceConnection {
+            override fun onServiceConnected(name: ComponentName, service: IBinder) {
+                playerServiceBinder = service as PlayerService.PlayerServiceBinder
+                try {
+                    mediaController = MediaControllerCompat(this@MusicPlayerActivity,
+                        playerServiceBinder!!.mediaSessionToken)
+                    mediaController!!.registerCallback(callback as MediaControllerCompat.Callback)
+
+                    // TODO: FIX NULL POINTER EXCEPTION
+                    //(callback as MediaControllerCompat.Callback).onPlaybackStateChanged(
+                        //mediaController!!.playbackState)
+                } catch (e: RemoteException) {
+                    mediaController = null
+                }
+            }
+
+            override fun onServiceDisconnected(name: ComponentName) {
+                playerServiceBinder = null
+                if (mediaController != null) {
+                    mediaController!!.unregisterCallback(callback as MediaControllerCompat.Callback)
+                    mediaController = null
+                }
+            }
+        }
+
+        bindService(Intent(this, PlayerService::class.java),
+            serviceConnection as ServiceConnection, BIND_AUTO_CREATE)
+
+        binding.btTrackPlay.setOnClickListener {
+            mediaController?.transportControls?.play()
+        }
+
+        binding.btTrackPause.setOnClickListener {
+            mediaController?.transportControls?.pause()
+        }
+
+        binding.btTrackNext.setOnClickListener {
+            mediaController?.transportControls?.skipToNext()
+        }
+
+        binding.btTrackPrevious.setOnClickListener {
+            mediaController?.transportControls?.skipToPrevious()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        playerServiceBinder = null
+        if (mediaController != null) {
+            mediaController!!.unregisterCallback(callback!!)
+            mediaController = null
+        }
+        unbindService(serviceConnection!!)
     }
 }
