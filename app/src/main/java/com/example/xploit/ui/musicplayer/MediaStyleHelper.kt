@@ -8,7 +8,7 @@ import android.media.session.MediaController
 import android.media.session.MediaSession
 import android.media.session.PlaybackState
 import androidx.core.app.NotificationCompat
-import android.media.session.MediaButtonReceiver
+import androidx.media.session.MediaButtonReceiver
 
 
 class MediaStyleHelper {
@@ -29,7 +29,6 @@ class MediaStyleHelper {
                         PlaybackState.ACTION_STOP))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         }
-
         return builder
     }
 }*/

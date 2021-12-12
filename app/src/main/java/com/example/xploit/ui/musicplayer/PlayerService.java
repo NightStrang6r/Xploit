@@ -81,6 +81,8 @@ final public class PlayerService extends Service {
     private ExtractorsFactory extractorsFactory;
     private DataSource.Factory dataSourceFactory;
 
+    private Cache cache;
+
     private final MusicRepository musicRepository = new MusicRepository();
 
     @Override
@@ -121,7 +123,7 @@ final public class PlayerService extends Service {
         exoPlayer = ExoPlayerFactory.newSimpleInstance(this, new DefaultRenderersFactory(this), new DefaultTrackSelector(), new DefaultLoadControl());
         exoPlayer.addListener(exoPlayerListener);
         DataSource.Factory httpDataSourceFactory = new OkHttpDataSourceFactory(new OkHttpClient(), Util.getUserAgent(this, getString(R.string.app_name)));
-        Cache cache = new SimpleCache(new File(this.getCacheDir().getAbsolutePath() + "/exoplayer"), new LeastRecentlyUsedCacheEvictor(1024 * 1024 * 100)); // 100 Mb max
+        cache = new SimpleCache(new File(this.getCacheDir().getAbsolutePath() + "/exoplayer"), new LeastRecentlyUsedCacheEvictor(1024 * 1024 * 100)); // 100 Mb max
         this.dataSourceFactory = new CacheDataSourceFactory(cache, httpDataSourceFactory, CacheDataSource.FLAG_BLOCK_ON_CACHE | CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR);
         this.extractorsFactory = new DefaultExtractorsFactory();
     }
@@ -137,6 +139,8 @@ final public class PlayerService extends Service {
         super.onDestroy();
         mediaSession.release();
         exoPlayer.release();
+        cache.release();
+        cache = null;
     }
 
     private MediaSessionCompat.Callback mediaSessionCallback = new MediaSessionCompat.Callback() {
