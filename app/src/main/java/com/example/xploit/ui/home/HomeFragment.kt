@@ -70,7 +70,8 @@ class HomeFragment : Fragment() {
                                 it.title,
                                 it.artist,
                                 it.duration,
-                                it.image))
+                                it.image,
+                                it.url))
                         }
                         adapter.setData(trackList)
                     } else {

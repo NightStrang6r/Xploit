@@ -1,27 +1,49 @@
 package com.example.xploit.ui.musicplayer
 
-import android.app.DownloadManager
+
+import android.R.attr
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
+import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
 import android.os.RemoteException
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.view.View
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.xploit.R
-import com.example.xploit.api.ApiResp
+import com.example.xploit.api.BASE_URL
 import com.example.xploit.api.CoverUrl
 import com.example.xploit.api.RetrofitInstance
-import com.example.xploit.databinding.ActivityMainBinding
 import com.example.xploit.databinding.ActivityMusicPlayerBinding
 import com.example.xploit.ui.track.*
 import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import android.graphics.drawable.Drawable
+
+import android.widget.Toast
+
+import android.graphics.Bitmap
+
+import android.os.Environment
+import com.squareup.picasso.Picasso.LoadedFrom
+import com.squareup.picasso.Target
+import kotlin.annotation.Target as Target1
+import android.R.attr.bitmap
+
+import android.graphics.drawable.BitmapDrawable
+
+
+
+
+
+object MySingleton {
+    var TrackData: Array<MusicRepository.Track>? = null
+}
 
 class MusicPlayerActivity : AppCompatActivity() {
 
@@ -32,20 +54,24 @@ class MusicPlayerActivity : AppCompatActivity() {
     private var callback: MediaControllerCompat.Callback? = null
     private var serviceConnection: ServiceConnection? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMusicPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val context = this
+
         val name = intent.getStringExtra(KEY_DATA_name)
         val artist = intent.getStringExtra(KEY_DATA_artist)
         val duration = intent.getStringExtra(KEY_DATA_duration)
         val cover = intent.getStringExtra(KEY_DATA_cover)
+        val url = intent.getStringExtra(KEY_DATA_url)
+
+        var coverBitmap: Int = R.drawable.track_cover
 
         binding.tvTrackName.text = name
         binding.tvTrackArtist.text = artist
-
-        val context = this
 
         fun setCoverUrl(query: String) : String? {
             var res : String? = null
@@ -54,6 +80,7 @@ class MusicPlayerActivity : AppCompatActivity() {
                     if(response.isSuccessful){
                         Picasso.with(context)
                             .load(response.body()?.url)
+                            .placeholder(R.drawable.track_cover)
                             .into(binding.ivTrackCover)
                     } else {
                         val i = 0
@@ -65,6 +92,17 @@ class MusicPlayerActivity : AppCompatActivity() {
                 }
             })
             return res
+        }
+
+        fun getCoverBitmap() {
+            Picasso.with(this).load(cover).into(object : Target {
+                override fun onBitmapLoaded(bitmap: Bitmap, from: LoadedFrom?) {
+                    //coverBitmap = BitmapDrawable(resources, bitmap)
+                }
+
+                override fun onBitmapFailed(errorDrawable: Drawable?) {}
+                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
+            })
         }
 
         setCoverUrl("${name} ${artist}")
@@ -110,6 +148,15 @@ class MusicPlayerActivity : AppCompatActivity() {
             serviceConnection as ServiceConnection, BIND_AUTO_CREATE)
 
         binding.btTrackPlay.setOnClickListener {
+            MySingleton.TrackData = arrayOf(
+                MusicRepository.Track(
+                    name!!,
+                    artist!!,
+                    coverBitmap,
+                    Uri.parse("${BASE_URL}getByHash/?hash=${url?.substring(14)}"),
+                    (3 * 60 + 41) * 1000
+                )
+            )
             mediaController?.transportControls?.play()
         }
 

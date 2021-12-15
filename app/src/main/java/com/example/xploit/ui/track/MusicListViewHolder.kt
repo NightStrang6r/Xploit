@@ -15,6 +15,7 @@ const val KEY_DATA_name = "data_name"
 const val KEY_DATA_artist = "data_artist"
 const val KEY_DATA_duration = "data_duration"
 const val KEY_DATA_cover = "data_cover"
+const val KEY_DATA_url = "data_url"
 
 class MusicListViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bindData(item: MusicModel) {
@@ -39,6 +40,7 @@ class MusicListViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
             intent.putExtra(KEY_DATA_artist, item.artist)
             intent.putExtra(KEY_DATA_duration, durationVal)
             intent.putExtra(KEY_DATA_cover, item.imgCover)
+            intent.putExtra(KEY_DATA_url, item.url)
             startActivity(itemView.context, intent, null)
         }
     }

@@ -4,5 +4,6 @@ data class MusicModel (
     val name: String,
     val artist: String,
     val playTime: String,
-    val imgCover: String?
+    val imgCover: String?,
+    val url: String
 )

@@ -55,6 +55,8 @@ import java.io.File;
 
 import okhttp3.OkHttpClient;
 
+import com.example.xploit.ui.musicplayer.MusicPlayerActivity.*;
+
 final public class PlayerService extends Service {
 
     private final int NOTIFICATION_ID = 404;
@@ -83,7 +85,7 @@ final public class PlayerService extends Service {
 
     private Cache cache;
 
-    private final MusicRepository musicRepository = new MusicRepository();
+    private MusicRepository musicRepository;
 
     @Override
     public void onCreate() {
@@ -152,6 +154,8 @@ final public class PlayerService extends Service {
         public void onPlay() {
             if (!exoPlayer.getPlayWhenReady()) {
                 startService(new Intent(getApplicationContext(), PlayerService.class));
+
+                musicRepository = new MusicRepository(MySingleton.INSTANCE.getTrackData());
 
                 MusicRepository.Track track = musicRepository.getCurrent();
                 updateMetadataFromTrack(track);

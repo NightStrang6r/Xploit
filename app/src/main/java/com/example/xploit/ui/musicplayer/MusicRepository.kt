@@ -3,13 +3,7 @@ package com.example.xploit.ui.musicplayer
 import android.net.Uri
 import com.example.xploit.R
 
-internal class MusicRepository {
-    private val data = arrayOf(
-        Track("Never Give Up",
-            "NEFFEX",
-            R.drawable.track_cover,
-            Uri.parse("https://xploit.leoitdev.ru/get/?id=282884077_456239473"),
-            (3 * 60 + 41) * 1000))
+class MusicRepository(val data: Array<Track>) {
     private val maxIndex = data.size - 1
     private var currentItemIndex = 0
 
@@ -26,7 +20,7 @@ internal class MusicRepository {
     val current: Track
         get() = data[currentItemIndex]
 
-    internal class Track(
+    data class Track(
         val title: String,
         val artist: String,
         val bitmapResId: Int,
@@ -34,3 +28,4 @@ internal class MusicRepository {
         val duration: Long, // in ms
     )
 }
+
