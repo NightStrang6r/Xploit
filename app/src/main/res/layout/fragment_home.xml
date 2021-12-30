@@ -8,14 +8,34 @@
     >
 
     <TextView
-        android:id="@+id/tv_Songs"
+        android:id="@+id/tv_Search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Песни"
-        android:textSize="30dp"
+        android:text="Поиск"
+        android:textSize="40dp"
+        android:textStyle="bold"
         android:layout_marginStart="15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/et_Search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_Search" />
+
+    <TextView
+        android:id="@+id/tv_Songs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:text="Песни"
+        android:textSize="22dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_Search" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_list"

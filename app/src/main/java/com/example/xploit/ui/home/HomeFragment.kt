@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -50,16 +51,45 @@ class HomeFragment : Fragment() {
 
         // TrackList //
         val rvList = binding.rvList
-
+        val etSearch = binding.etSearch
         val adapter = MusicListAdapter(requireContext())
-
         val layoutManager = LinearLayoutManager(requireContext())
 
         rvList.adapter = adapter
         rvList.layoutManager = layoutManager
 
-        val trackList = mutableListOf<MusicModel>()
+        var trackList = mutableListOf<MusicModel>()
 
+        etSearch.addTextChangedListener {
+            binding.tvStatusText.text = ""
+            RetrofitInstance.api.getTrackListBySearch(etSearch.text.toString()).enqueue(object : Callback<ApiResp> {
+                override fun onResponse(call: Call<ApiResp>, response: Response<ApiResp>) {
+                    if(response.isSuccessful){
+                        trackList.clear()
+                        response.body()?.items?.forEach { it ->
+                            trackList.add(MusicModel(
+                                it.title,
+                                it.artist,
+                                it.duration,
+                                it.image,
+                                it.url,
+                                1))
+                        }
+                        adapter.setData(trackList)
+                    } else {
+                        trackList.clear()
+                        adapter.setData(trackList)
+                        binding.tvStatusText.text = "Не удалось получить список песен (code: resp)."
+                    }
+                }
+
+                override fun onFailure(call: Call<ApiResp>, t: Throwable) {
+                    trackList = mutableListOf()
+                    adapter.setData(trackList)
+                    binding.tvStatusText.text = "Не удалось получить список песен (code: fail)."
+                }
+            })
+        }
 
         fun getPopularPlaylist() {
             RetrofitInstance.api.getPopularPlaylist().enqueue(object : Callback<ApiResp> {
@@ -71,7 +101,8 @@ class HomeFragment : Fragment() {
                                 it.artist,
                                 it.duration,
                                 it.image,
-                                it.url))
+                                it.url,
+                                2))
                         }
                         adapter.setData(trackList)
                     } else {

@@ -10,20 +10,17 @@ import com.example.xploit.ui.track.MusicModel
 class MusicListAdapter (
     private val context: Context
 ) : RecyclerView.Adapter<MusicListViewHolder>() {
-    private val list = mutableListOf<MusicModel>()
+    private var list = mutableListOf<MusicModel>()
 
     fun setData(newList: List<MusicModel>){
+        list = mutableListOf()
         list.addAll(newList)
         notifyDataSetChanged()
     }
 
-    fun changeList() {
-        list.forEachIndexed { index, user ->
-            if(user.name == "Tom Hardy 8") {
-                list.remove(user)
-                notifyDataSetChanged()
-            }
-        }
+    fun addData(newList: List<MusicModel>){
+        list.addAll(newList)
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicListViewHolder {

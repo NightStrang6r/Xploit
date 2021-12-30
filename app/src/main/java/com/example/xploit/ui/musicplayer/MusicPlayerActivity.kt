@@ -67,6 +67,7 @@ class MusicPlayerActivity : AppCompatActivity() {
         val duration = intent.getStringExtra(KEY_DATA_duration)
         val cover = intent.getStringExtra(KEY_DATA_cover)
         val url = intent.getStringExtra(KEY_DATA_url)
+        val urlType = intent.getIntExtra(KEY_DATA_url_type, 1)
 
         var coverBitmap: Int = R.drawable.track_cover
 
@@ -78,10 +79,17 @@ class MusicPlayerActivity : AppCompatActivity() {
             RetrofitInstance.api.getCoverUrl(query).enqueue(object : Callback<CoverUrl> {
                 override fun onResponse(call: Call<CoverUrl>, response: Response<CoverUrl>) {
                     if(response.isSuccessful){
-                        Picasso.with(context)
-                            .load(response.body()?.url)
-                            .placeholder(R.drawable.track_cover)
-                            .into(binding.ivTrackCover)
+                        Log.d("devlog", "${response.body()?.url}")
+                        if (response.body()?.url != null && !response.body()?.url?.isEmpty()!!)
+                            Picasso.with(context)
+                                .load(response.body()?.url)
+                                .placeholder(R.drawable.track_cover)
+                                .into(binding.ivTrackCover)
+                        else
+                            Picasso.with(context)
+                                .load(R.drawable.track_cover)
+                                .placeholder(R.drawable.track_cover)
+                                .into(binding.ivTrackCover)
                     } else {
                         val i = 0
                     }
@@ -148,12 +156,17 @@ class MusicPlayerActivity : AppCompatActivity() {
             serviceConnection as ServiceConnection, BIND_AUTO_CREATE)
 
         binding.btTrackPlay.setOnClickListener {
+            val urlFinal = if(urlType == 1) {
+                Uri.parse("${BASE_URL}get/?id=${url?.substring(12)}")
+            } else {
+                Uri.parse("${BASE_URL}getByHash/?hash=${url?.substring(14)}")
+            }
             MySingleton.TrackData = arrayOf(
                 MusicRepository.Track(
                     name!!,
                     artist!!,
                     coverBitmap,
-                    Uri.parse("${BASE_URL}getByHash/?hash=${url?.substring(14)}"),
+                    urlFinal,
                     (3 * 60 + 41) * 1000
                 )
             )

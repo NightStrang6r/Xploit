@@ -16,9 +16,11 @@ interface ApiService {
     @GET("getCatalog/?id=popular")
     fun getPopularPlaylist() : Call<ApiResp>
 
-
     @GET("getCoverUrl/")
     fun getCoverUrl(@Query("q") query: String) : Call<CoverUrl>
+
+    @GET("search/")
+    fun getTrackListBySearch(@Query("q") query: String) : Call<ApiResp>
 }
 
 object RetrofitInstance {
@@ -38,16 +40,6 @@ object RetrofitInstance {
         retrofit.create(ApiService::class.java)
     }
 }
-
-data class CreateCalcRequest(
-    val x: String,
-)
-
-data class Solution(
-    @SerializedName("x")
-    val x: String,
-    val result: String,
-)
 
 data class ApiResp(
     val error: Boolean,

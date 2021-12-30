@@ -16,6 +16,7 @@ const val KEY_DATA_artist = "data_artist"
 const val KEY_DATA_duration = "data_duration"
 const val KEY_DATA_cover = "data_cover"
 const val KEY_DATA_url = "data_url"
+const val KEY_DATA_url_type = "data_url_type"
 
 class MusicListViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bindData(item: MusicModel) {
@@ -32,6 +33,7 @@ class MusicListViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
         duration.text = durationVal
         Picasso.with(itemView.context)
             .load(item.imgCover)
+            .placeholder(R.drawable.track_cover)
             .into(cover)
 
         group.setOnClickListener {
@@ -41,6 +43,7 @@ class MusicListViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
             intent.putExtra(KEY_DATA_duration, durationVal)
             intent.putExtra(KEY_DATA_cover, item.imgCover)
             intent.putExtra(KEY_DATA_url, item.url)
+            intent.putExtra(KEY_DATA_url_type, item.urlType)
             startActivity(itemView.context, intent, null)
         }
     }
