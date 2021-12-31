@@ -14,28 +14,49 @@
         android:text="Поиск"
         android:textSize="40dp"
         android:textStyle="bold"
+        android:textColor="@color/black"
         android:layout_marginStart="15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/et_Search"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_Search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
-        app:layout_constraintTop_toBottomOf="@+id/tv_Search" />
+
+        app:cardCornerRadius="8dp"
+        android:background="@color/black"
+
+        app:layout_constraintTop_toBottomOf="@+id/tv_Search">
+
+        <EditText
+            android:id="@+id/et_Search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+
+            android:backgroundTint="@android:color/transparent"
+            android:hint="Песни, альбомы, исполнители"
+
+            app:layout_constraintTop_toBottomOf="@+id/tv_Search" />
+
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/tv_Songs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
+        android:layout_marginTop="8dp"
         android:text="Песни"
         android:textSize="22dp"
         android:textStyle="bold"
+        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_Search" />
+        app:layout_constraintTop_toBottomOf="@+id/cv_Search" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_list"

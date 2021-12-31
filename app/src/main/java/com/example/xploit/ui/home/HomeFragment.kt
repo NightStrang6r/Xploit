@@ -60,37 +60,6 @@ class HomeFragment : Fragment() {
 
         var trackList = mutableListOf<MusicModel>()
 
-        etSearch.addTextChangedListener {
-            binding.tvStatusText.text = ""
-            RetrofitInstance.api.getTrackListBySearch(etSearch.text.toString()).enqueue(object : Callback<ApiResp> {
-                override fun onResponse(call: Call<ApiResp>, response: Response<ApiResp>) {
-                    if(response.isSuccessful){
-                        trackList.clear()
-                        response.body()?.items?.forEach { it ->
-                            trackList.add(MusicModel(
-                                it.title,
-                                it.artist,
-                                it.duration,
-                                it.image,
-                                it.url,
-                                1))
-                        }
-                        adapter.setData(trackList)
-                    } else {
-                        trackList.clear()
-                        adapter.setData(trackList)
-                        binding.tvStatusText.text = "Не удалось получить список песен (code: resp)."
-                    }
-                }
-
-                override fun onFailure(call: Call<ApiResp>, t: Throwable) {
-                    trackList = mutableListOf()
-                    adapter.setData(trackList)
-                    binding.tvStatusText.text = "Не удалось получить список песен (code: fail)."
-                }
-            })
-        }
-
         fun getPopularPlaylist() {
             RetrofitInstance.api.getPopularPlaylist().enqueue(object : Callback<ApiResp> {
                 override fun onResponse(call: Call<ApiResp>, response: Response<ApiResp>) {
@@ -117,6 +86,44 @@ class HomeFragment : Fragment() {
         }
 
         getPopularPlaylist()
+
+        etSearch.addTextChangedListener {
+            binding.tvStatusText.text = ""
+            if (etSearch.text.toString().isEmpty()){
+                getPopularPlaylist()
+            } else {
+                RetrofitInstance.api.getTrackListBySearch(etSearch.text.toString())
+                    .enqueue(object : Callback<ApiResp> {
+                        override fun onResponse(call: Call<ApiResp>, response: Response<ApiResp>) {
+                            if (response.isSuccessful) {
+                                trackList.clear()
+                                response.body()?.items?.forEach { it ->
+                                    trackList.add(MusicModel(
+                                        it.title,
+                                        it.artist,
+                                        it.duration,
+                                        it.image,
+                                        it.url,
+                                        1))
+                                }
+                                adapter.setData(trackList)
+                            } else {
+                                trackList.clear()
+                                adapter.setData(trackList)
+                                binding.tvStatusText.text =
+                                    "Не удалось получить список песен (code: resp)."
+                            }
+                        }
+
+                        override fun onFailure(call: Call<ApiResp>, t: Throwable) {
+                            trackList = mutableListOf()
+                            adapter.setData(trackList)
+                            binding.tvStatusText.text =
+                                "Не удалось получить список песен (code: fail)."
+                        }
+                    })
+            }
+        }
         // TrackList //
 
         return root
