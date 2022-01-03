@@ -11,4 +11,5 @@
 
     <color name="tv_artist_blue">#FF0000FF</color>
     <color name="colorPrimaryDark">#303F9F</color>
+    <color name="system_ui_scrim_dark">#30000000</color> <!-- 19% black -->
 </resources>

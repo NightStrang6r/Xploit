@@ -28,9 +28,6 @@ class HomeFragment : Fragment() {
 
     private lateinit var homeViewModel: HomeViewModel
     private var _binding: FragmentHomeBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -44,14 +41,10 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        /*val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })*/
-
         // TrackList //
         val rvList = binding.rvList
         val etSearch = binding.etSearch
+        val pbListLoading = binding.pbListLoading
         val adapter = MusicListAdapter(requireContext())
         val layoutManager = LinearLayoutManager(requireContext())
 
@@ -61,6 +54,7 @@ class HomeFragment : Fragment() {
         var trackList = mutableListOf<MusicModel>()
 
         fun getPopularPlaylist() {
+            pbListLoading.visibility = View.VISIBLE
             RetrofitInstance.api.getPopularPlaylist().enqueue(object : Callback<ApiResp> {
                 override fun onResponse(call: Call<ApiResp>, response: Response<ApiResp>) {
                     if(response.isSuccessful){
@@ -74,13 +68,16 @@ class HomeFragment : Fragment() {
                                 2))
                         }
                         adapter.setData(trackList)
+                        pbListLoading.visibility = View.INVISIBLE
                     } else {
                         binding.tvStatusText.text = "Не удалось получить список песен (code: resp)."
+                        pbListLoading.visibility = View.INVISIBLE
                     }
                 }
 
                 override fun onFailure(call: Call<ApiResp>, t: Throwable) {
                     binding.tvStatusText.text = "Не удалось получить список песен (code: fail)."
+                    pbListLoading.visibility = View.INVISIBLE
                 }
             })
         }
@@ -89,6 +86,7 @@ class HomeFragment : Fragment() {
 
         etSearch.addTextChangedListener {
             binding.tvStatusText.text = ""
+            pbListLoading.visibility = View.VISIBLE
             if (etSearch.text.toString().isEmpty()){
                 getPopularPlaylist()
             } else {
@@ -96,30 +94,36 @@ class HomeFragment : Fragment() {
                     .enqueue(object : Callback<ApiResp> {
                         override fun onResponse(call: Call<ApiResp>, response: Response<ApiResp>) {
                             if (response.isSuccessful) {
+                                binding.tvStatusText.text = ""
                                 trackList.clear()
-                                response.body()?.items?.forEach { it ->
-                                    trackList.add(MusicModel(
-                                        it.title,
-                                        it.artist,
-                                        it.duration,
-                                        it.image,
-                                        it.url,
-                                        1))
+                                if (response.body()?.items == null) {
+                                    binding.tvStatusText.text = "По запросу ${etSearch.text} ничего не найдено"
+                                } else {
+                                    response.body()?.items?.forEach { it ->
+                                        trackList.add(MusicModel(
+                                            it.title,
+                                            it.artist,
+                                            it.duration,
+                                            it.image,
+                                            it.url,
+                                            1))
+                                    }
                                 }
                                 adapter.setData(trackList)
+                                pbListLoading.visibility = View.INVISIBLE
                             } else {
                                 trackList.clear()
                                 adapter.setData(trackList)
-                                binding.tvStatusText.text =
-                                    "Не удалось получить список песен (code: resp)."
+                                binding.tvStatusText.text = "Не удалось получить список песен (code: resp)."
+                                pbListLoading.visibility = View.INVISIBLE
                             }
                         }
 
                         override fun onFailure(call: Call<ApiResp>, t: Throwable) {
                             trackList = mutableListOf()
                             adapter.setData(trackList)
-                            binding.tvStatusText.text =
-                                "Не удалось получить список песен (code: fail)."
+                            binding.tvStatusText.text = "Не удалось получить список песен (code: fail)."
+                            pbListLoading.visibility = View.INVISIBLE
                         }
                     })
             }

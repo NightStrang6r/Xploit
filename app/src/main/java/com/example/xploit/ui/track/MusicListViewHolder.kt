@@ -11,12 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.xploit.ui.musicplayer.MusicPlayerActivity
 import androidx.core.content.ContextCompat.startActivity
 
-const val KEY_DATA_name = "data_name"
-const val KEY_DATA_artist = "data_artist"
-const val KEY_DATA_duration = "data_duration"
-const val KEY_DATA_cover = "data_cover"
-const val KEY_DATA_url = "data_url"
-const val KEY_DATA_url_type = "data_url_type"
+const val KEY_DATA_music_list = "data_music_list"
 
 class MusicListViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bindData(item: MusicModel) {
@@ -38,12 +33,14 @@ class MusicListViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         group.setOnClickListener {
             val intent = Intent(itemView.context, MusicPlayerActivity::class.java)
-            intent.putExtra(KEY_DATA_name, item.name)
-            intent.putExtra(KEY_DATA_artist, item.artist)
-            intent.putExtra(KEY_DATA_duration, durationVal)
-            intent.putExtra(KEY_DATA_cover, item.imgCover)
-            intent.putExtra(KEY_DATA_url, item.url)
-            intent.putExtra(KEY_DATA_url_type, item.urlType)
+            intent.putExtra(KEY_DATA_music_list, MusicModelIntent(
+                item.name,
+                item.artist,
+                durationVal,
+                item.imgCover,
+                item.url,
+                item.urlType
+            ))
             startActivity(itemView.context, intent, null)
         }
     }

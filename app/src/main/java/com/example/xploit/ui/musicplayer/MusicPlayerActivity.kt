@@ -54,7 +54,6 @@ class MusicPlayerActivity : AppCompatActivity() {
     private var callback: MediaControllerCompat.Callback? = null
     private var serviceConnection: ServiceConnection? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMusicPlayerBinding.inflate(layoutInflater)
@@ -62,12 +61,13 @@ class MusicPlayerActivity : AppCompatActivity() {
 
         val context = this
 
-        val name = intent.getStringExtra(KEY_DATA_name)
-        val artist = intent.getStringExtra(KEY_DATA_artist)
-        val duration = intent.getStringExtra(KEY_DATA_duration)
-        val cover = intent.getStringExtra(KEY_DATA_cover)
-        val url = intent.getStringExtra(KEY_DATA_url)
-        val urlType = intent.getIntExtra(KEY_DATA_url_type, 1)
+        val extraData = intent.getParcelableExtra<MusicModelIntent>(KEY_DATA_music_list)
+        val name = extraData?.name
+        val artist = extraData?.artist
+        val duration = extraData?.playTime
+        val cover = extraData?.imgCover
+        val url = extraData?.url
+        val urlType = extraData?.urlType
 
         var coverBitmap: Int = R.drawable.track_cover
 
