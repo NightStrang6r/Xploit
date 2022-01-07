@@ -2,13 +2,17 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingTop="38dp">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageButton
+        android:id="@+id/bt_back"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:src="@drawable/ic_baseline_arrow_back_24"
         android:layout_margin="15dp"
+        android:background="?android:selectableItemBackground"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,7 +26,177 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/songCurrentProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:minWidth="40dp"
+        android:singleLine="true"
+        android:textColor="?android:attr/textColorSecondary"
+        app:layout_constraintBottom_toBottomOf="@+id/progressSlider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/progressSlider"
+        tools:ignore="RtlHardcoded,RtlSymmetry"
+        tools:text="@tools:sample/date/hhmmss" />
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/progressSlider"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:maxHeight="2dp"
+        android:paddingVertical="16dp"
+        android:progressDrawable="@drawable/color_progress_seek"
+        app:layout_constraintEnd_toStartOf="@id/songTotalTime"
+        app:layout_constraintStart_toEndOf="@id/songCurrentProgress"
+        app:layout_constraintTop_toBottomOf="@+id/iv_trackCover"
+        tools:ignore="RtlHardcoded,UnusedAttribute"
+        tools:progress="20" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/songTotalTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:gravity="end"
+        android:minWidth="40dp"
+        android:singleLine="true"
+        android:textColor="?android:attr/textColorSecondary"
+        app:layout_constraintBottom_toBottomOf="@+id/progressSlider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="RtlHardcoded,RtlSymmetry"
+        tools:text="@tools:sample/date/hhmmss" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_trackName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:freezesText="true"
+        android:gravity="center"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:paddingHorizontal="16dp"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/tv_trackArtist"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressSlider"
+        tools:text="@tools:sample/lorem/random" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_trackArtist"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:freezesText="true"
+        android:gravity="center"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:textColor="?android:attr/textColorSecondary"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@+id/songInfo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_trackName"
+        tools:text="@tools:sample/full_names" />
+
+    <ImageButton
+        android:id="@+id/repeatButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?android:selectableItemBackground"
+        android:padding="16dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@+id/bt_trackPrevious"
+        app:layout_constraintEnd_toStartOf="@+id/bt_trackPrevious"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/bt_trackPrevious"
+        app:srcCompat="@drawable/ic_repeat"
+        tools:ignore="MissingPrefix"
+        tools:tint="@color/black" />
+
+    <ImageButton
+        android:id="@+id/bt_trackPrevious"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?android:selectableItemBackground"
+        android:padding="16dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@+id/bt_trackPlay"
+        app:layout_constraintEnd_toStartOf="@+id/bt_trackPlay"
+        app:layout_constraintStart_toEndOf="@+id/repeatButton"
+        app:layout_constraintTop_toTopOf="@+id/bt_trackPlay"
+        app:srcCompat="@drawable/ic_skip_previous"
+        tools:ignore="MissingPrefix"
+        tools:tint="@color/black" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/bt_trackPlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?android:selectableItemBackground"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/bt_trackNext"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/bt_trackPrevious"
+        app:layout_constraintTop_toBottomOf="@+id/tv_trackArtist"
+        app:srcCompat="@drawable/ic_play"
+        tools:tint="@color/black" />
+
+    <ImageButton
+        android:id="@+id/bt_trackNext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?android:selectableItemBackground"
+        android:padding="16dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@+id/bt_trackPlay"
+        app:layout_constraintEnd_toStartOf="@+id/shuffleButton"
+        app:layout_constraintStart_toEndOf="@+id/bt_trackPlay"
+        app:layout_constraintTop_toTopOf="@+id/bt_trackPlay"
+        app:srcCompat="@drawable/ic_skip_next"
+        tools:ignore="MissingPrefix"
+        tools:tint="@color/black" />
+
+    <ImageButton
+        android:id="@+id/shuffleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?android:selectableItemBackground"
+        android:padding="16dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="@+id/bt_trackNext"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/bt_trackNext"
+        app:layout_constraintTop_toTopOf="@+id/bt_trackNext"
+        app:srcCompat="@drawable/ic_shuffle"
+        tools:ignore="MissingPrefix"
+        tools:tint="@color/black" />
+
+    <!--<androidx.fragment.app.FragmentContainerView
+        android:id="@+id/playbackControlsFragment"
+        android:name="com.example.xploit.ui.musicplayer.ControlsFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_trackCover"
+        tools:layout="@layout/fragment_player_playback_controls" />-->
+
+    <!--<TextView
         android:id="@+id/tv_trackName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -53,7 +227,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="40dp"
         android:text="Play"
-
+        android:background="?android:selectableItemBackground"
         android:src="@drawable/ic_baseline_play_circle_filled_50"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -64,7 +238,7 @@
         android:id="@+id/bt_TrackPause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
+        android:background="?android:selectableItemBackground"
         android:src="@drawable/ic_baseline_pause_circle_filled_50"
         android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +250,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="40dp"
-        android:background="@null"
+        android:background="?android:selectableItemBackground"
         android:src="@drawable/ic_baseline_skip_previous_50"
         android:text="Play"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -89,12 +263,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="40dp"
-        android:background="@null"
+        android:background="?android:selectableItemBackground"
         android:src="@drawable/ic_baseline_skip_next_50"
         android:text="Play"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/bt_trackPlay"
-        app:layout_constraintTop_toBottomOf="@+id/tv_trackArtist" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_trackArtist" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

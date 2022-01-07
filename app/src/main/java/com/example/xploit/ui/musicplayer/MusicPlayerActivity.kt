@@ -25,20 +25,11 @@ import retrofit2.Callback
 import retrofit2.Response
 import android.graphics.drawable.Drawable
 
-import android.widget.Toast
 
 import android.graphics.Bitmap
 
-import android.os.Environment
 import com.squareup.picasso.Picasso.LoadedFrom
 import com.squareup.picasso.Target
-import kotlin.annotation.Target as Target1
-import android.R.attr.bitmap
-
-import android.graphics.drawable.BitmapDrawable
-
-
-
 
 
 object MySingleton {
@@ -70,9 +61,29 @@ class MusicPlayerActivity : AppCompatActivity() {
         val urlType = extraData?.urlType
 
         var coverBitmap: Int = R.drawable.track_cover
+        var playFlag = false;
 
         binding.tvTrackName.text = name
         binding.tvTrackArtist.text = artist
+
+        binding.btBack.setOnClickListener {
+            finish()
+        }
+
+        val urlFinal = if(urlType == 1) {
+            Uri.parse("${BASE_URL}get/?id=${url?.substring(12)}")
+        } else {
+            Uri.parse("${BASE_URL}getByHash/?hash=${url?.substring(14)}")
+        }
+        MySingleton.TrackData = arrayOf(
+            MusicRepository.Track(
+                name!!,
+                artist!!,
+                coverBitmap,
+                urlFinal,
+                (3 * 60 + 41) * 1000
+            )
+        )
 
         fun setCoverUrl(query: String) : String? {
             var res : String? = null
@@ -121,8 +132,8 @@ class MusicPlayerActivity : AppCompatActivity() {
             override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
                 if (state == null) return
                 val playing = state.state == PlaybackStateCompat.STATE_PLAYING
-                binding.btTrackPlay.isEnabled = !playing
-                binding.btTrackPause.isEnabled = playing
+                //binding.btTrackPlay.isEnabled = !playing
+                //binding.btTrackPause.isEnabled = playing
                 //stopButton.setEnabled(playing)
             }
         }
@@ -156,25 +167,15 @@ class MusicPlayerActivity : AppCompatActivity() {
             serviceConnection as ServiceConnection, BIND_AUTO_CREATE)
 
         binding.btTrackPlay.setOnClickListener {
-            val urlFinal = if(urlType == 1) {
-                Uri.parse("${BASE_URL}get/?id=${url?.substring(12)}")
+            if(!playFlag) {
+                playFlag = true
+                binding.btTrackPlay.setImageResource(R.drawable.ic_pause)
+                mediaController?.transportControls?.play()
             } else {
-                Uri.parse("${BASE_URL}getByHash/?hash=${url?.substring(14)}")
+                playFlag = false
+                binding.btTrackPlay.setImageResource(R.drawable.ic_play)
+                mediaController?.transportControls?.pause()
             }
-            MySingleton.TrackData = arrayOf(
-                MusicRepository.Track(
-                    name!!,
-                    artist!!,
-                    coverBitmap,
-                    urlFinal,
-                    (3 * 60 + 41) * 1000
-                )
-            )
-            mediaController?.transportControls?.play()
-        }
-
-        binding.btTrackPause.setOnClickListener {
-            mediaController?.transportControls?.pause()
         }
 
         binding.btTrackNext.setOnClickListener {
