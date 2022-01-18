@@ -93,6 +93,11 @@ class HomeFragment : Fragment() {
                 RetrofitInstance.api.getTrackListBySearch(etSearch.text.toString())
                     .enqueue(object : Callback<ApiResp> {
                         override fun onResponse(call: Call<ApiResp>, response: Response<ApiResp>) {
+                            // Если фрагмент был закрыт, binding не существует, выходим
+                            if (binding == null){
+                                return
+                            }
+
                             if (response.isSuccessful) {
                                 binding.tvStatusText.text = ""
                                 trackList.clear()
