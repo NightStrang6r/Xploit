@@ -21,6 +21,9 @@ interface ApiService {
 
     @GET("search/")
     fun getTrackListBySearch(@Query("q") query: String) : Call<ApiResp>
+
+    @GET("getID")
+    fun getVkID(@Query("link") query: String) : Call<VkID>
 }
 
 object RetrofitInstance {
@@ -60,4 +63,9 @@ data class Track(
 
 data class CoverUrl(
     val url: String,
+)
+
+data class VkID(
+    val success: Boolean,
+    val id: Int
 )

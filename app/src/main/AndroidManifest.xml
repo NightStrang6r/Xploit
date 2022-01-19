@@ -34,7 +34,7 @@
             android:exported="true">
         </activity>
         <activity
-            android:name=".ui.gallery.AddPlaylist"
+            android:name=".ui.gallery.ImportPlaylistActivity"
             android:exported="true">
         </activity>
         <service

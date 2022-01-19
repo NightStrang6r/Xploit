@@ -1,5 +1,6 @@
 package com.example.xploit.ui.musicplayer
 
+import android.graphics.Bitmap
 import android.net.Uri
 import com.example.xploit.R
 
@@ -23,7 +24,8 @@ class MusicRepository(val data: Array<Track>) {
     data class Track(
         val title: String,
         val artist: String,
-        val bitmapResId: Int,
+        var bitmapResId: Bitmap,
+        val coverUrl: String,
         val uri: Uri,
         val duration: Long, // in ms
     )

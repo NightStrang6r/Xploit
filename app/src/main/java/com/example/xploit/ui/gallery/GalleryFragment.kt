@@ -1,6 +1,7 @@
 package com.example.xploit.ui.gallery
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -36,9 +37,7 @@ class GalleryFragment : Fragment() {
         val context = requireContext()
 
         binding.ibAddPlaylist.setOnClickListener {
-            Log.d("devlog", "Here1!")
-            if (binding.clAddPlaylist.visibility == View.INVISIBLE) {
-                Log.d("devlog", "Here!")
+            if (binding.clAddPlaylist.visibility == View.GONE) {
                 binding.ibAddPlaylist.setImageDrawable(ContextCompat.getDrawable(
                     context,
                     R.drawable.ic_baseline_remove_24
@@ -49,9 +48,13 @@ class GalleryFragment : Fragment() {
                     context,
                     R.drawable.ic_baseline_add_24
                 ))
-                binding.clAddPlaylist.visibility = View.INVISIBLE
+                binding.clAddPlaylist.visibility = View.GONE
             }
+        }
 
+        binding.ibVk.setOnClickListener {
+            val Intent = Intent(context, ImportPlaylistActivity::class.java)
+            startActivity(Intent)
         }
 
         return root

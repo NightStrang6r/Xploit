@@ -13,7 +13,7 @@
         android:layout_marginStart="15dp"
         android:text="@string/menu_gallery"
         android:textColor="@color/black"
-        android:textSize="40sp"
+        android:textSize="40dp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -64,7 +64,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cardView2"
+            android:id="@+id/cv_vk"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -74,6 +74,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_Songs">
 
             <ImageButton
+                android:id="@+id/ib_vk"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:background="?android:selectableItemBackground"
@@ -87,9 +88,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/vk_library"
-            app:layout_constraintEnd_toEndOf="@+id/cardView2"
-            app:layout_constraintStart_toStartOf="@+id/cardView2"
-            app:layout_constraintTop_toBottomOf="@+id/cardView2" />
+            app:layout_constraintEnd_toEndOf="@+id/cv_vk"
+            app:layout_constraintStart_toStartOf="@+id/cv_vk"
+            app:layout_constraintTop_toBottomOf="@+id/cv_vk" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_spotify"
@@ -99,7 +100,7 @@
             android:layout_marginStart="15dp"
             android:shadowRadius="0"
             app:cardCornerRadius="100dp"
-            app:layout_constraintStart_toEndOf="@+id/cardView2"
+            app:layout_constraintStart_toEndOf="@+id/cv_vk"
             app:layout_constraintTop_toBottomOf="@+id/tv_Songs">
 
             <ImageButton
@@ -118,8 +119,40 @@
             android:text="@string/spotify_library"
             app:layout_constraintEnd_toEndOf="@+id/cv_spotify"
             app:layout_constraintStart_toStartOf="@+id/cv_spotify"
-            app:layout_constraintTop_toBottomOf="@+id/cardView2" />
+            app:layout_constraintTop_toBottomOf="@+id/cv_vk" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tv_Playlists"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/playlists"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cl_addPlaylist" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="@string/playlists_empty"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_Playlists" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_Playlists"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@+id/tv_Playlists"
+        tools:layout_editor_absoluteX="0dp"
+        tools:listitem="@layout/music_track" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

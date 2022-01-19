@@ -27,6 +27,7 @@ import android.graphics.drawable.Drawable
 
 
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 
 import com.squareup.picasso.Picasso.LoadedFrom
 import com.squareup.picasso.Target
@@ -70,21 +71,6 @@ class MusicPlayerActivity : AppCompatActivity() {
             finish()
         }
 
-        val urlFinal = if(urlType == 1) {
-            Uri.parse("${BASE_URL}get/?id=${url?.substring(12)}")
-        } else {
-            Uri.parse("${BASE_URL}getByHash/?hash=${url?.substring(14)}")
-        }
-        MySingleton.TrackData = arrayOf(
-            MusicRepository.Track(
-                name!!,
-                artist!!,
-                coverBitmap,
-                urlFinal,
-                (3 * 60 + 41) * 1000
-            )
-        )
-
         fun setCoverUrl(query: String) : String? {
             var res : String? = null
             RetrofitInstance.api.getCoverUrl(query).enqueue(object : Callback<CoverUrl> {
@@ -113,18 +99,20 @@ class MusicPlayerActivity : AppCompatActivity() {
             return res
         }
 
-        fun getCoverBitmap() {
-            Picasso.with(this).load(cover).into(object : Target {
+        setCoverUrl("${name} ${artist}")
+
+        /*MySingleton.TrackData?.forEach {
+            Log.d("devlog", "url >> ${it.coverUrl}")
+            Picasso.with(baseContext).load(it.coverUrl).into(object : Target {
                 override fun onBitmapLoaded(bitmap: Bitmap, from: LoadedFrom?) {
-                    //coverBitmap = BitmapDrawable(resources, bitmap)
+                    it.bitmapResId = bitmap
+                    Log.d("devlog", "Loaded")
                 }
 
                 override fun onBitmapFailed(errorDrawable: Drawable?) {}
                 override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
             })
-        }
-
-        setCoverUrl("${name} ${artist}")
+        }*/
 
         //
 

@@ -12,6 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.xploit.ui.musicplayer.MusicPlayerActivity
 import androidx.core.content.ContextCompat.startActivity
 import com.example.xploit.api.BASE_URL
+import com.example.xploit.ui.musicplayer.MySingleton
 import java.net.URLEncoder
 
 const val KEY_DATA_music_list = "data_music_list"

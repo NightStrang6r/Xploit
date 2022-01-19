@@ -257,7 +257,7 @@ final public class PlayerService extends Service {
         }
 
         private void updateMetadataFromTrack(MusicRepository.Track track) {
-            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, BitmapFactory.decodeResource(getResources(), track.getBitmapResId()));
+            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, track.getBitmapResId());
             metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, track.getTitle());
             metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, track.getArtist());
             metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, track.getArtist());
