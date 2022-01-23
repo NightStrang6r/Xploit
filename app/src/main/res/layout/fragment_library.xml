@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.gallery.GalleryFragment">
+    tools:context=".ui.library.GalleryFragment">
 
     <TextView
         android:id="@+id/textView2"
@@ -124,7 +124,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/tv_Playlists"
+        android:id="@+id/tv_playlists"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
@@ -137,22 +137,23 @@
         app:layout_constraintTop_toBottomOf="@+id/cl_addPlaylist" />
 
     <TextView
+        android:id="@+id/tv_nothing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:text="@string/playlists_empty"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_Playlists" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_playlists" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_Playlists"
+        android:id="@+id/rv_playlists"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@+id/tv_Playlists"
+        app:layout_constraintTop_toBottomOf="@+id/tv_playlists"
         tools:layout_editor_absoluteX="0dp"
-        tools:listitem="@layout/music_track" />
+        tools:listitem="@layout/playlist_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

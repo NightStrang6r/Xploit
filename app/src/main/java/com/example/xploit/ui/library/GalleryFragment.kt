@@ -1,24 +1,28 @@
-package com.example.xploit.ui.gallery
+package com.example.xploit.ui.library
 
-import android.annotation.SuppressLint
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.xploit.R
-import com.example.xploit.databinding.FragmentGalleryBinding
+import com.example.xploit.databinding.FragmentLibraryBinding
+import com.example.xploit.ui.playlist.PlaylistAdapter
+import com.example.xploit.ui.playlist.PlaylistModel
+import com.example.xploit.ui.track.MusicListAdapter
+import com.example.xploit.ui.track.MusicModel
 
 class GalleryFragment : Fragment() {
 
     private lateinit var galleryViewModel: GalleryViewModel
-    private var _binding: FragmentGalleryBinding? = null
+    private var _binding: FragmentLibraryBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -32,7 +36,7 @@ class GalleryFragment : Fragment() {
         galleryViewModel =
             ViewModelProvider(this).get(GalleryViewModel::class.java)
 
-        _binding = FragmentGalleryBinding.inflate(inflater, container, false)
+        _binding = FragmentLibraryBinding.inflate(inflater, container, false)
         val root: View = binding.root
         val context = requireContext()
 
@@ -55,6 +59,32 @@ class GalleryFragment : Fragment() {
         binding.ibVk.setOnClickListener {
             val Intent = Intent(context, ImportPlaylistActivity::class.java)
             startActivity(Intent)
+        }
+
+        // Playlist //
+        val rvList = binding.rvPlaylists
+        val adapter = PlaylistAdapter(requireContext())
+        val layoutManager = LinearLayoutManager(requireContext())
+
+        rvList.adapter = adapter
+        rvList.layoutManager = layoutManager
+
+        var playlist = mutableListOf<PlaylistModel>()
+
+        val sharedPref = activity?.getSharedPreferences("APP_PREFERENCES", MODE_PRIVATE)
+        var VkID = sharedPref?.getString("VkID", "0")?.toInt()
+        Log.d("devlog", "VKID >> $VkID")
+        if(VkID != 0) {
+            Log.d("devlog", "cant find VkID")
+            playlist.add(PlaylistModel(
+                "VK Favorites",
+                ""
+            ))
+            adapter.addData(playlist)
+        }
+
+        if(playlist.isNotEmpty()){
+            binding.tvNothing.visibility = View.GONE
         }
 
         return root

@@ -22,7 +22,7 @@ interface ApiService {
     @GET("search/")
     fun getTrackListBySearch(@Query("q") query: String) : Call<ApiResp>
 
-    @GET("getID")
+    @GET("getID/")
     fun getVkID(@Query("link") query: String) : Call<VkID>
 }
 
@@ -66,6 +66,6 @@ data class CoverUrl(
 )
 
 data class VkID(
-    val success: Boolean,
-    val id: Int
+    val success: String,
+    val id: String
 )

@@ -1,23 +1,29 @@
 package com.example.xploit.ui.track;
 
+import android.content.Intent
+import android.os.Build
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.xploit.R
-import com.squareup.picasso.Picasso
-import android.content.Intent
-import android.util.Log
-import androidx.constraintlayout.widget.ConstraintLayout
-import com.example.xploit.ui.musicplayer.MusicPlayerActivity
-import androidx.core.content.ContextCompat.startActivity
 import com.example.xploit.api.BASE_URL
+import com.example.xploit.ui.musicplayer.MusicPlayerActivity
+import com.example.xploit.ui.musicplayer.MusicRepository
 import com.example.xploit.ui.musicplayer.MySingleton
+import com.squareup.picasso.Picasso
 import java.net.URLEncoder
+import java.util.*
+import java.util.stream.IntStream
 
 const val KEY_DATA_music_list = "data_music_list"
 
 class MusicListViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+    @RequiresApi(Build.VERSION_CODES.N)
     fun bindData(item: MusicModel) {
         val group = itemView.findViewById<ConstraintLayout>(R.id.cl_group)
         val name = itemView.findViewById<TextView>(R.id.tv_name)
@@ -47,7 +53,26 @@ class MusicListViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
                 item.url,
                 item.urlType
             ))
+
+            var id = 0
+            var counter = 0
+
+            MySingleton.TrackData?.forEach {
+                if(it.title == item.name)
+                    id = counter
+                counter++
+            }
+
+            MySingleton.TrackData = shift(MySingleton.TrackData!!, id)
+
             startActivity(itemView.context, intent, null)
         }
+    }
+
+    fun shift(array: Array<MusicRepository.Track>, shift: Int): Array<MusicRepository.Track> {
+        val copy = array.copyOf(shift)
+        System.arraycopy(array, shift, array, 0, array.size - shift)
+        System.arraycopy(copy, 0, array, array.size - shift, shift)
+        return array
     }
 }
