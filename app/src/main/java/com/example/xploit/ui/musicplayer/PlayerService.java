@@ -10,7 +10,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
@@ -18,6 +20,7 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
+import android.os.StrictMode;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -29,6 +32,8 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.media.session.MediaButtonReceiver;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.FutureTarget;
 import com.example.xploit.R;
 import com.example.xploit.databinding.ActivityMusicPlayerBinding;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -53,11 +58,18 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 import okhttp3.OkHttpClient;
 
 import com.example.xploit.ui.musicplayer.MusicPlayerActivity.*;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 final public class PlayerService extends Service {
 
@@ -156,6 +168,7 @@ final public class PlayerService extends Service {
             if (MySingleton.INSTANCE.getNeedRefresh()) {
                 MySingleton.INSTANCE.setNeedRefresh(false);
                 musicRepository = new MusicRepository(MySingleton.INSTANCE.getTrackData());
+                preloadCovers();
             }
         }
 
@@ -265,12 +278,36 @@ final public class PlayerService extends Service {
             }
         }
 
+        // Hardcoded
+        private void preloadCovers() {
+            /*MusicRepository.Track[] tempList = MySingleton.INSTANCE.getTrackData();
+            for (int i = 0; i < tempList.length; i++) {
+                int finalI = i;
+                Target target = new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        tempList[finalI].setBitmapResId(bitmap);
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) {
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                    }
+                };
+                Picasso.with(getApplicationContext()).load(tempList[i].getCoverUrl()).into(target);
+            }
+            MySingleton.INSTANCE.setTrackData(tempList);*/
+        }
+
         private void updateMetadataFromTrack(MusicRepository.Track track) {
-            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, track.getBitmapResId());
             metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_TITLE, track.getTitle());
             metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, track.getArtist());
             metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, track.getArtist());
             metadataBuilder.putLong(MediaMetadataCompat.METADATA_KEY_DURATION, track.getDuration());
+            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ART, track.getBitmapResId());
 
             // Обновляем isNowPlaying в списке песен
             MusicRepository.Track[] tempList = MySingleton.INSTANCE.getTrackData();

@@ -1,6 +1,8 @@
 package com.example.xploit.ui.track;
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.Log
 import android.view.View
@@ -16,6 +18,7 @@ import com.example.xploit.ui.musicplayer.MusicPlayerActivity
 import com.example.xploit.ui.musicplayer.MusicRepository
 import com.example.xploit.ui.musicplayer.MySingleton
 import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 import java.net.URLEncoder
 import java.util.*
 import java.util.stream.IntStream
@@ -36,13 +39,33 @@ class MusicListViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imgCover = URLEncoder.encode("${item.imgCover}", "utf-8")
         val readyImageCover = "${BASE_URL}img/?url=${imgCover}"
 
+        val target = object : Target {
+            override fun onBitmapLoaded(bitmap: Bitmap, from: Picasso.LoadedFrom?) {
+                MySingleton.TrackData?.forEach {
+                    if(it.title == name.text)
+                        it.bitmapResId = bitmap
+                }
+            }
+
+            override fun onBitmapFailed(errorDrawable: Drawable?) {}
+
+            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
+        }
+
         name.text = item.name
         artist.text = item.artist
         duration.text = durationVal
+        // Для активити
         Picasso.with(itemView.context)
             .load(readyImageCover)
             .placeholder(R.drawable.track_cover)
             .into(cover)
+
+        // Для PlayerService
+        Picasso.with(itemView.context)
+            .load(readyImageCover)
+            .placeholder(R.drawable.track_cover)
+            .into(target)
 
         group.setOnClickListener {
             val intent = Intent(itemView.context, MusicPlayerActivity::class.java)

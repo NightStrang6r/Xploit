@@ -1,11 +1,9 @@
 package com.example.xploit.ui.musicplayer
 
 
-import android.R.attr
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
-import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
 import android.os.RemoteException
@@ -14,7 +12,6 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.xploit.R
-import com.example.xploit.api.BASE_URL
 import com.example.xploit.api.CoverUrl
 import com.example.xploit.api.RetrofitInstance
 import com.example.xploit.databinding.ActivityMusicPlayerBinding
@@ -23,7 +20,6 @@ import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import android.graphics.drawable.Drawable
 
 
 import android.graphics.Bitmap
@@ -38,6 +34,7 @@ object MySingleton {
     var TrackData: Array<MusicRepository.Track>? = null
     var TrackDataSave: Array<MusicRepository.Track>? = null
     var NeedRefresh: Boolean = false
+    var IsPlaying: Boolean = false
 }
 
 class MusicPlayerActivity : AppCompatActivity() {
@@ -57,7 +54,7 @@ class MusicPlayerActivity : AppCompatActivity() {
         val context = this
 
         var coverBitmap: Int = R.drawable.track_cover
-        var playFlag = false;
+        var isThisPlayedFlag = false;
 
         binding.tvTrackName.text = MySingleton.TrackData?.get(0)?.title
         binding.tvTrackArtist.text = MySingleton.TrackData?.get(0)?.artist
@@ -96,7 +93,7 @@ class MusicPlayerActivity : AppCompatActivity() {
 
         fun updateTrackUI() {
             MySingleton.TrackData?.forEach {
-                if(it.isNowPlaying){
+                if(it.isNowPlaying) {
                     binding.tvTrackName.text = it.title
                     binding.tvTrackArtist.text = it.artist
                     setCoverUrl("${it.title} ${it.artist}")
@@ -135,6 +132,12 @@ class MusicPlayerActivity : AppCompatActivity() {
                 super.onMetadataChanged(metadata)
                 updateTrackUI()
             }
+
+            override fun onRepeatModeChanged(repeatMode: Int) {
+                super.onRepeatModeChanged(repeatMode)
+            }
+
+
         }
 
         serviceConnection = object : ServiceConnection {
@@ -166,12 +169,17 @@ class MusicPlayerActivity : AppCompatActivity() {
             serviceConnection as ServiceConnection, BIND_AUTO_CREATE)
 
         binding.btTrackPlay.setOnClickListener {
-            if(!playFlag) {
-                playFlag = true
+            if(!isThisPlayedFlag) {
+                if(MySingleton.IsPlaying) {
+                    mediaController?.transportControls?.pause()
+                }
+                isThisPlayedFlag = true
+                MySingleton.IsPlaying = true
                 binding.btTrackPlay.setImageResource(R.drawable.ic_pause)
                 mediaController?.transportControls?.play()
             } else {
-                playFlag = false
+                isThisPlayedFlag = false
+                MySingleton.IsPlaying = false
                 binding.btTrackPlay.setImageResource(R.drawable.ic_play)
                 mediaController?.transportControls?.pause()
             }
