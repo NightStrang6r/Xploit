@@ -45,10 +45,14 @@ class MusicListAdapter (
                 coverBitmap,
                 readyImgCoverUrl,
                 urlFinal,
-                (playTimeMinutes * 60 + playTimeSeconds) * 1000
+                (playTimeMinutes * 60 + playTimeSeconds) * 1000,
+                false
             ))
         }
         MySingleton.TrackData = tempList.toTypedArray()
+        // Делаем копию списка песен
+        MySingleton.TrackDataSave = MySingleton.TrackData
+        MySingleton.NeedRefresh = true;
 
         notifyDataSetChanged()
     }

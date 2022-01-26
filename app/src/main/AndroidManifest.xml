@@ -33,6 +33,10 @@
             android:name=".ui.library.ImportPlaylistActivity"
             android:exported="false">
         </activity>
+        <activity
+            android:name=".ui.library.PlaylistActivity"
+            android:exported="false">
+        </activity>
         <service
             android:name=".ui.musicplayer.PlayerService"
             android:exported="false"

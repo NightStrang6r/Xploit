@@ -21,6 +21,7 @@ import android.os.IBinder;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -29,6 +30,7 @@ import androidx.core.content.ContextCompat;
 import androidx.media.session.MediaButtonReceiver;
 
 import com.example.xploit.R;
+import com.example.xploit.databinding.ActivityMusicPlayerBinding;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -85,7 +87,7 @@ final public class PlayerService extends Service {
 
     private Cache cache;
 
-    private MusicRepository musicRepository;
+    private MusicRepository musicRepository = null;
 
     @Override
     public void onCreate() {
@@ -150,12 +152,19 @@ final public class PlayerService extends Service {
         private Uri currentUri;
         int currentState = PlaybackStateCompat.STATE_STOPPED;
 
+        public void updateRepository() {
+            if (MySingleton.INSTANCE.getNeedRefresh()) {
+                MySingleton.INSTANCE.setNeedRefresh(false);
+                musicRepository = new MusicRepository(MySingleton.INSTANCE.getTrackData());
+            }
+        }
+
         @Override
         public void onPlay() {
             if (!exoPlayer.getPlayWhenReady()) {
                 startService(new Intent(getApplicationContext(), PlayerService.class));
 
-                musicRepository = new MusicRepository(MySingleton.INSTANCE.getTrackData());
+                updateRepository();
 
                 MusicRepository.Track track = musicRepository.getCurrent();
                 updateMetadataFromTrack(track);
@@ -262,6 +271,18 @@ final public class PlayerService extends Service {
             metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, track.getArtist());
             metadataBuilder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, track.getArtist());
             metadataBuilder.putLong(MediaMetadataCompat.METADATA_KEY_DURATION, track.getDuration());
+
+            // Обновляем isNowPlaying в списке песен
+            MusicRepository.Track[] tempList = MySingleton.INSTANCE.getTrackData();
+            for (int i = 0; i < tempList.length; i++) {
+                if(tempList[i] == track){
+                    tempList[i].setNowPlaying(true);
+                } else {
+                    tempList[i].setNowPlaying(false);
+                }
+            }
+            MySingleton.INSTANCE.setTrackData(tempList);
+
             mediaSession.setMetadata(metadataBuilder.build());
         }
     };
@@ -301,6 +322,7 @@ final public class PlayerService extends Service {
 
         @Override
         public void onLoadingChanged(boolean isLoading) {
+            Log.d("devlog", "onLoadingChanged >> " + isLoading);
         }
 
         @Override

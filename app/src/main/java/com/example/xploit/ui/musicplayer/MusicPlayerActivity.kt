@@ -28,6 +28,7 @@ import android.graphics.drawable.Drawable
 
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.support.v4.media.MediaMetadataCompat
 
 import com.squareup.picasso.Picasso.LoadedFrom
 import com.squareup.picasso.Target
@@ -35,6 +36,8 @@ import com.squareup.picasso.Target
 
 object MySingleton {
     var TrackData: Array<MusicRepository.Track>? = null
+    var TrackDataSave: Array<MusicRepository.Track>? = null
+    var NeedRefresh: Boolean = false
 }
 
 class MusicPlayerActivity : AppCompatActivity() {
@@ -53,19 +56,11 @@ class MusicPlayerActivity : AppCompatActivity() {
 
         val context = this
 
-        val extraData = intent.getParcelableExtra<MusicModelIntent>(KEY_DATA_music_list)
-        val name = extraData?.name
-        val artist = extraData?.artist
-        val duration = extraData?.playTime
-        val cover = extraData?.imgCover
-        val url = extraData?.url
-        val urlType = extraData?.urlType
-
         var coverBitmap: Int = R.drawable.track_cover
         var playFlag = false;
 
-        binding.tvTrackName.text = name
-        binding.tvTrackArtist.text = artist
+        binding.tvTrackName.text = MySingleton.TrackData?.get(0)?.title
+        binding.tvTrackArtist.text = MySingleton.TrackData?.get(0)?.artist
 
         binding.btBack.setOnClickListener {
             finish()
@@ -99,7 +94,18 @@ class MusicPlayerActivity : AppCompatActivity() {
             return res
         }
 
-        setCoverUrl("${name} ${artist}")
+        fun updateTrackUI() {
+            MySingleton.TrackData?.forEach {
+                if(it.isNowPlaying){
+                    binding.tvTrackName.text = it.title
+                    binding.tvTrackArtist.text = it.artist
+                    setCoverUrl("${it.title} ${it.artist}")
+                    return
+                }
+            }
+        }
+
+        setCoverUrl("${MySingleton.TrackData?.get(0)?.title} ${MySingleton.TrackData?.get(0)?.artist}")
 
         /*MySingleton.TrackData?.forEach {
             Log.d("devlog", "url >> ${it.coverUrl}")
@@ -124,6 +130,11 @@ class MusicPlayerActivity : AppCompatActivity() {
                 //binding.btTrackPause.isEnabled = playing
                 //stopButton.setEnabled(playing)
             }
+
+            override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
+                super.onMetadataChanged(metadata)
+                updateTrackUI()
+            }
         }
 
         serviceConnection = object : ServiceConnection {
@@ -132,11 +143,11 @@ class MusicPlayerActivity : AppCompatActivity() {
                 try {
                     mediaController = MediaControllerCompat(this@MusicPlayerActivity,
                         playerServiceBinder!!.mediaSessionToken)
-                    mediaController!!.registerCallback(callback as MediaControllerCompat.Callback)
+                    mediaController?.registerCallback(callback as MediaControllerCompat.Callback)
 
                     // TODO: FIX NULL POINTER EXCEPTION
-                    //(callback as MediaControllerCompat.Callback).onPlaybackStateChanged(
-                        //mediaController!!.playbackState)
+                    /*(callback as MediaControllerCompat.Callback)?.onPlaybackStateChanged(
+                        mediaController?.playbackState)*/
                 } catch (e: RemoteException) {
                     mediaController = null
                 }

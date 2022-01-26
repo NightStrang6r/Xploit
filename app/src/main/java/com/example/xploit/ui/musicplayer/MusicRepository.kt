@@ -27,7 +27,8 @@ class MusicRepository(val data: Array<Track>) {
         var bitmapResId: Bitmap,
         val coverUrl: String,
         val uri: Uri,
-        val duration: Long, // in ms
+        val duration: Long,
+        var isNowPlaying: Boolean
     )
 }
 

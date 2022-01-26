@@ -2,6 +2,7 @@ package com.example.xploit.ui.track;
 
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -57,6 +58,9 @@ class MusicListViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
             var id = 0
             var counter = 0
 
+            // Восстанавливаем копию списка песен
+            MySingleton.TrackData = MySingleton.TrackDataSave
+
             MySingleton.TrackData?.forEach {
                 if(it.title == item.name)
                     id = counter
@@ -64,6 +68,7 @@ class MusicListViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
             }
 
             MySingleton.TrackData = shift(MySingleton.TrackData!!, id)
+            MySingleton.NeedRefresh = true;
 
             startActivity(itemView.context, intent, null)
         }

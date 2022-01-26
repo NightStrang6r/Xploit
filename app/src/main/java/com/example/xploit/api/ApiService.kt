@@ -24,6 +24,9 @@ interface ApiService {
 
     @GET("getID/")
     fun getVkID(@Query("link") query: String) : Call<VkID>
+
+    @GET("getPlaylist/")
+    fun getVkPlaylist(@Query("id") query: String) : Call<ApiResp>
 }
 
 object RetrofitInstance {

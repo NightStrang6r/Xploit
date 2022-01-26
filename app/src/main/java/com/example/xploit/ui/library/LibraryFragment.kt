@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -16,12 +15,10 @@ import com.example.xploit.R
 import com.example.xploit.databinding.FragmentLibraryBinding
 import com.example.xploit.ui.playlist.PlaylistAdapter
 import com.example.xploit.ui.playlist.PlaylistModel
-import com.example.xploit.ui.track.MusicListAdapter
-import com.example.xploit.ui.track.MusicModel
 
-class GalleryFragment : Fragment() {
+class LibraryFragment : Fragment() {
 
-    private lateinit var galleryViewModel: GalleryViewModel
+    private lateinit var galleryViewModel: LibraryViewModel
     private var _binding: FragmentLibraryBinding? = null
 
     // This property is only valid between onCreateView and
@@ -34,7 +31,7 @@ class GalleryFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         galleryViewModel =
-            ViewModelProvider(this).get(GalleryViewModel::class.java)
+            ViewModelProvider(this).get(LibraryViewModel::class.java)
 
         _binding = FragmentLibraryBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -78,7 +75,8 @@ class GalleryFragment : Fragment() {
             Log.d("devlog", "cant find VkID")
             playlist.add(PlaylistModel(
                 "VK Favorites",
-                ""
+                "",
+                1
             ))
             adapter.addData(playlist)
         }

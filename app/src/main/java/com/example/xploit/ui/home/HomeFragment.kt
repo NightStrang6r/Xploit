@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -59,6 +60,9 @@ class HomeFragment : Fragment() {
             RetrofitInstance.api.getPopularPlaylist().enqueue(object : Callback<ApiResp> {
                 override fun onResponse(call: Call<ApiResp>, response: Response<ApiResp>) {
                     if(response.isSuccessful){
+                        if(response.body()?.error == true) {
+                            Msg("Не удалось получить список песен (code: resp).")
+                        }
                         response.body()?.items?.forEach { it ->
                             trackList.add(MusicModel(
                                 it.title,
@@ -137,6 +141,11 @@ class HomeFragment : Fragment() {
         // TrackList //
 
         return root
+    }
+
+    fun Msg(msg: String) {
+        val myToast = Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT)
+        myToast.show()
     }
 
     override fun onDestroyView() {
