@@ -91,7 +91,7 @@ class MusicListViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
             }
 
             MySingleton.TrackData = shift(MySingleton.TrackData!!, id)
-            MySingleton.NeedRefresh = true;
+            MySingleton.NeedRefresh = true
 
             startActivity(itemView.context, intent, null)
         }

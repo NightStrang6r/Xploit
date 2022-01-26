@@ -312,7 +312,7 @@ final public class PlayerService extends Service {
             // Обновляем isNowPlaying в списке песен
             MusicRepository.Track[] tempList = MySingleton.INSTANCE.getTrackData();
             for (int i = 0; i < tempList.length; i++) {
-                if(tempList[i] == track){
+                if(tempList[i] == track) {
                     tempList[i].setNowPlaying(true);
                 } else {
                     tempList[i].setNowPlaying(false);
@@ -365,7 +365,12 @@ final public class PlayerService extends Service {
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
             if (playWhenReady && playbackState == ExoPlayer.STATE_ENDED) {
-                mediaSessionCallback.onSkipToNext();
+                if (!MySingleton.INSTANCE.getRepeat()){
+                    mediaSessionCallback.onSkipToNext();
+                } else {
+                    mediaSessionCallback.onSkipToPrevious();
+                    mediaSessionCallback.onSkipToNext();
+                }
             }
         }
 
