@@ -61,7 +61,7 @@ class HomeFragment : Fragment() {
                 override fun onResponse(call: Call<ApiResp>, response: Response<ApiResp>) {
                     if(response.isSuccessful){
                         if(response.body()?.error == true) {
-                            Msg("Не удалось получить список песен (code: resp).")
+                            msg("Не удалось получить список песен (code: resp).")
                         }
                         response.body()?.items?.forEach { it ->
                             trackList.add(MusicModel(
@@ -143,7 +143,7 @@ class HomeFragment : Fragment() {
         return root
     }
 
-    fun Msg(msg: String) {
+    fun msg(msg: String) {
         val myToast = Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT)
         myToast.show()
     }
