@@ -4,7 +4,6 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.Handler
 import android.os.IBinder
 import android.os.RemoteException
 import android.support.v4.media.session.MediaControllerCompat
@@ -24,7 +23,6 @@ import retrofit2.Response
 import android.support.v4.media.MediaMetadataCompat
 import android.widget.Toast
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 // Global settings and track lists
 object MySingleton {
@@ -63,8 +61,8 @@ class MusicPlayerActivity : AppCompatActivity() {
         binding.tvSongCurrentProgress.text = "0:00"
         currentTrackTitle = firstSong?.title.toString()
 
-        val songMinutes = (firstSong?.duration?.div(1000))?.div(60)
-        val songSeconds = (firstSong?.duration?.div(1000))?.rem(60)
+        var songMinutes : Int? = (firstSong?.duration?.div(1000))?.div(60)?.toInt()
+        var songSeconds : Int? = (firstSong?.duration?.div(1000))?.rem(60)?.toInt()
         if (songSeconds != null) {
             if(songSeconds < 10)
                 binding.tvSongTotalTime.text = "${songMinutes}:0${songSeconds}"
@@ -102,7 +100,12 @@ class MusicPlayerActivity : AppCompatActivity() {
             return res
         }
 
-
+        fun updateSeekBar(minutes: Int, seconds: Int, songMinutes: Int, songSeconds: Int) {
+            val max = (songMinutes.times(60)).plus(songSeconds)
+            val current = (minutes.times(60)).plus(seconds)
+            val progress: Double = current.div(max.toDouble()) * 100
+            binding.pbProgressSlider.progress = progress.toInt()
+        }
 
         fun updateTime(minutes: Int, seconds: Int) {
             runOnUiThread(kotlinx.coroutines.Runnable {
@@ -127,6 +130,7 @@ class MusicPlayerActivity : AppCompatActivity() {
                 timer.scheduleAtFixedRate(object : TimerTask() {
                     override fun run() {
                         updateTime(songCurMinutes, songCurSeconds)
+                        updateSeekBar(songCurMinutes, songCurSeconds, songMinutes!!.toInt(), songSeconds!!.toInt())
                         if(songCurSeconds >= 59) {
                             songCurSeconds = 0
                             songCurMinutes++
@@ -160,21 +164,29 @@ class MusicPlayerActivity : AppCompatActivity() {
                 if(it.isNowPlaying) {
                     if(currentTrackTitle != it.title){
                         dropTimer()
+                        updateSeekBar(0, 0, 0, 0)
                     }
                     currentTrackTitle = it.title
 
                     binding.tvTrackName.text = it.title
                     binding.tvTrackArtist.text = it.artist
 
-                    setCoverUrl("${it.title} ${it.artist}")
+                    songMinutes = (it.duration.div(1000)).div(60).toInt()
+                    songSeconds = (it.duration.div(1000)).rem(60).toInt()
+                    if (songSeconds != null) {
+                        if(songSeconds!! < 10)
+                            binding.tvSongTotalTime.text = "${songMinutes}:0${songSeconds}"
+                        else
+                            binding.tvSongTotalTime.text = "${songMinutes}:${songSeconds}"
+                    }
 
-                    //updatePlayPause(false)
+                    setCoverUrl("${it.title} ${it.artist}")
                     return
                 }
             }
         }
 
-        setCoverUrl("${MySingleton.TrackData?.get(0)?.title} ${MySingleton.TrackData?.get(0)?.artist}")
+        setCoverUrl("${firstSong?.title} ${firstSong?.artist}")
 
         //
 
