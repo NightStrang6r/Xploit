@@ -30,6 +30,8 @@ import java.util.concurrent.TimeUnit
 object MySingleton {
     var TrackData: Array<MusicRepository.Track>? = null
     var TrackDataSave: Array<MusicRepository.Track>? = null
+    var CurrentPlaySeconds: Int = 0
+    var CurrentPlayMinutes: Int = 0
     var NeedRefresh: Boolean = false
     var IsPlaying: Boolean = false
     var Repeat: Boolean = false
@@ -44,6 +46,7 @@ class MusicPlayerActivity : AppCompatActivity() {
     private var mediaController: MediaControllerCompat? = null
     private var callback: MediaControllerCompat.Callback? = null
     private var serviceConnection: ServiceConnection? = null
+    private var timer = Timer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,17 +54,24 @@ class MusicPlayerActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val context = this
-        var isThisPlayedFlag = false
-        var timer = Timer()
+        var state = 3
         val firstSong = MySingleton.TrackData?.get(0)
+        var currentTrackTitle = ""
 
         binding.tvTrackName.text = firstSong?.title
         binding.tvTrackArtist.text = firstSong?.artist
         binding.tvSongCurrentProgress.text = "0:00"
+        currentTrackTitle = firstSong?.title.toString()
 
         val songMinutes = (firstSong?.duration?.div(1000))?.div(60)
         val songSeconds = (firstSong?.duration?.div(1000))?.rem(60)
-        binding.tvSongTotalTime.text = "${songMinutes}:${songSeconds}"
+        if (songSeconds != null) {
+            if(songSeconds < 10)
+                binding.tvSongTotalTime.text = "${songMinutes}:0${songSeconds}"
+            else
+                binding.tvSongTotalTime.text = "${songMinutes}:${songSeconds}"
+        }
+
         var songCurMinutes = 0
         var songCurSeconds = 0
 
@@ -92,37 +102,76 @@ class MusicPlayerActivity : AppCompatActivity() {
             return res
         }
 
-        fun updateTrackUI() {
-            MySingleton.TrackData?.forEach {
-                if(it.isNowPlaying) {
-                    binding.tvTrackName.text = it.title
-                    binding.tvTrackArtist.text = it.artist
-                    setCoverUrl("${it.title} ${it.artist}")
-                    return
-                }
-            }
+
+
+        fun updateTime(minutes: Int, seconds: Int) {
+            runOnUiThread(kotlinx.coroutines.Runnable {
+                if (seconds < 10)
+                    binding.tvSongCurrentProgress.text = "${minutes}:0${seconds}"
+                else
+                    binding.tvSongCurrentProgress.text = "${minutes}:${seconds}"
+            })
+        }
+
+        fun dropTimer() {
+            songCurSeconds = 0
+            songCurMinutes = 0
+            MySingleton.CurrentPlaySeconds = 0
+            MySingleton.CurrentPlayMinutes = 0
+            updateTime(songCurMinutes, songCurSeconds)
         }
 
         fun setTimer(start: Boolean) {
-            runOnUiThread(kotlinx.coroutines.Runnable {
-                if(start) {
-                    timer.scheduleAtFixedRate(object : TimerTask() {
-                        override fun run() {
-                            songCurSeconds++
-                            if(songCurSeconds > 60) {
-                                songCurSeconds = 0
-                                songCurMinutes++
-                            }
-                            if(songCurSeconds < 10)
-                                binding.tvSongCurrentProgress.text = "${songCurMinutes}:0${songCurSeconds}"
-                            else
-                                binding.tvSongCurrentProgress.text = "${songCurMinutes}:${songCurSeconds}"
+            if(start) {
+                timer = Timer()
+                timer.scheduleAtFixedRate(object : TimerTask() {
+                    override fun run() {
+                        updateTime(songCurMinutes, songCurSeconds)
+                        if(songCurSeconds >= 59) {
+                            songCurSeconds = 0
+                            songCurMinutes++
                         }
-                    }, 0, 1000)
-                } else {
-                    timer.cancel()
+                        songCurSeconds++
+                        MySingleton.CurrentPlayMinutes = songCurMinutes
+                        MySingleton.CurrentPlaySeconds = songCurSeconds
+                    }
+                }, 0, 1000)
+            } else {
+                timer.cancel()
+            }
+        }
+
+        fun updatePlayPause() {
+            if(state == 3) {
+                state = 2
+                MySingleton.IsPlaying = true
+                binding.btTrackPlay.setImageResource(R.drawable.ic_pause)
+                setTimer(start = true)
+            } else {
+                state = 3
+                MySingleton.IsPlaying = false
+                binding.btTrackPlay.setImageResource(R.drawable.ic_play)
+                setTimer(start = false)
+            }
+        }
+
+        fun updateTrackUI() {
+            MySingleton.TrackData?.forEach {
+                if(it.isNowPlaying) {
+                    if(currentTrackTitle != it.title){
+                        dropTimer()
+                    }
+                    currentTrackTitle = it.title
+
+                    binding.tvTrackName.text = it.title
+                    binding.tvTrackArtist.text = it.artist
+
+                    setCoverUrl("${it.title} ${it.artist}")
+
+                    //updatePlayPause(false)
+                    return
                 }
-            })
+            }
         }
 
         setCoverUrl("${MySingleton.TrackData?.get(0)?.title} ${MySingleton.TrackData?.get(0)?.artist}")
@@ -130,9 +179,12 @@ class MusicPlayerActivity : AppCompatActivity() {
         //
 
         callback = object : MediaControllerCompat.Callback() {
-            override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
-                if (state == null) return
-                val playing = state.state == PlaybackStateCompat.STATE_PLAYING
+            override fun onPlaybackStateChanged(thisState: PlaybackStateCompat) {
+                if (thisState == null) return
+                Log.d("devlog", "state >> $thisState")
+                state = thisState.state
+                updatePlayPause()
+                //val playing = state.state == PlaybackStateCompat.STATE_PLAYING
                 //binding.btTrackPlay.isEnabled = !playing
                 //binding.btTrackPause.isEnabled = playing
                 //stopButton.setEnabled(playing)
@@ -177,20 +229,11 @@ class MusicPlayerActivity : AppCompatActivity() {
         }
 
         binding.btTrackPlay.setOnClickListener {
-            if(!isThisPlayedFlag) {
-                if(MySingleton.IsPlaying) {
+            if(state == 3) {
+                if(MySingleton.IsPlaying)
                     mediaController?.transportControls?.pause()
-                }
-                isThisPlayedFlag = true
-                MySingleton.IsPlaying = true
-                binding.btTrackPlay.setImageResource(R.drawable.ic_pause)
-                //setTimer(true)
                 mediaController?.transportControls?.play()
             } else {
-                isThisPlayedFlag = false
-                MySingleton.IsPlaying = false
-                binding.btTrackPlay.setImageResource(R.drawable.ic_play)
-                //setTimer(false)
                 mediaController?.transportControls?.pause()
             }
         }
@@ -237,6 +280,7 @@ class MusicPlayerActivity : AppCompatActivity() {
             mediaController!!.unregisterCallback(callback!!)
             mediaController = null
         }
+        timer.cancel()
         unbindService(serviceConnection!!)
     }
 
