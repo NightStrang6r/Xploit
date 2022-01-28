@@ -215,10 +215,6 @@ class MusicPlayerActivity : AppCompatActivity() {
                     mediaController = MediaControllerCompat(this@MusicPlayerActivity,
                         playerServiceBinder!!.mediaSessionToken)
                     mediaController?.registerCallback(callback as MediaControllerCompat.Callback)
-
-                    // TODO: FIX NULL POINTER EXCEPTION
-                    /*(callback as MediaControllerCompat.Callback)?.onPlaybackStateChanged(
-                        mediaController?.playbackState)*/
                 } catch (e: RemoteException) {
                     mediaController = null
                 }
